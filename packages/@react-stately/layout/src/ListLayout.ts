@@ -311,6 +311,11 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   updateItemSize(key: Key, size: Size) {
     let layoutInfo = this.layoutInfos.get(key);
+    // If no layoutInfo, item has been deleted/removed.
+    if (!layoutInfo) {
+      return false;
+    }
+
     layoutInfo.estimatedSize = false;
     if (layoutInfo.rect.height !== size.height) {
       // Copy layout info rather than mutating so that later caches are invalidated.
@@ -385,7 +390,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     if (layoutInfo) {
       let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
-      while (layoutInfo && layoutInfo.rect.y > pageY && layoutInfo) {
+      while (layoutInfo && layoutInfo.rect.y > pageY) {
         let keyAbove = this.getKeyAbove(layoutInfo.key);
         layoutInfo = this.getLayoutInfo(keyAbove);
       }
